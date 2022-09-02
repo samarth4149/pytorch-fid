@@ -115,13 +115,13 @@ def get_activations(files, model, batch_size=50, dims=2048, device='cpu',
                'Setting batch size to data size'))
         batch_size = len(files)
 
-    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+    normalize = TF.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
 
-    val_transform = transforms.Compose([
-        transforms.Resize(256, interpolation=3),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
+    val_transform = TF.Compose([
+        TF.Resize(256, interpolation=3),
+        TF.CenterCrop(224),
+        TF.ToTensor(),
         normalize,
     ])
     
