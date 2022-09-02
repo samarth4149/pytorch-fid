@@ -232,7 +232,7 @@ def compute_statistics_of_dataset(dataset, model, batch_size, dims, device, num_
     """ 
     Dataset must have the member 'samples'
     """
-    if isinstance(dataset.samples[0], tuple):
+    if isinstance(dataset.samples[0], tuple) or isinstance(dataset.samples[0], list):
         files = [pathlib.Path(sample[0]) for sample in dataset.samples]
     else:
         files = [pathlib.Path(sample) for sample in dataset.samples]
