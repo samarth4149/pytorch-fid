@@ -228,6 +228,16 @@ def calculate_activation_statistics(files, model, batch_size=50, dims=2048,
     return mu, sigma
 
 
+def compute_statistics_of_dataset(dataset, model, batch_size, dims, device, num_workers=1):
+    """ 
+    Dataset must have the member 'samples'
+    """
+    if isinstance(dataset.samples[0], tuple):
+        files = [pathlib.Path(sample[0]) for sample in dataset.samples]
+    else:
+        files = [pathlib.Path(sample) for sample in dataset.samples]
+    return calculate_activation_statistics(files, model, batch_size, dims, device, num_workers)
+
 def compute_statistics_of_path(path, model, batch_size, dims, device,
                                num_workers=1):
     if path.endswith('.npz'):
@@ -260,6 +270,11 @@ def calculate_fid_given_paths(paths, batch_size, device, dims, num_workers=1):
     fid_value = calculate_frechet_distance(m1, s1, m2, s2)
 
     return fid_value
+
+def get_model(device, dims=2048):
+    block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[dims]
+    model = InceptionV3([block_idx]).to(device)
+    return model
 
 
 def main():
