@@ -120,7 +120,7 @@ def get_activations_from_dset(
                                              drop_last=False,
                                              num_workers=num_workers)
 
-    pred_arr = np.empty((len(files), dims))
+    pred_arr = np.empty((len(dset), dims))
 
     start_idx = 0
 
@@ -128,7 +128,7 @@ def get_activations_from_dset(
         imgs = batch[0].to(device)
 
         with torch.no_grad():
-            pred = model(batch)[0]
+            pred = model(imgs)[0]
 
         # If model output is not scalar, apply global spatial average pooling.
         # This happens if you choose a dimensionality not equal 2048.
