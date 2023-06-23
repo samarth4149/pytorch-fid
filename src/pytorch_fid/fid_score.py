@@ -132,10 +132,11 @@ def get_activations_from_dset(
 
         # If model output is not scalar, apply global spatial average pooling.
         # This happens if you choose a dimensionality not equal 2048.
-        if pred.size(2) != 1 or pred.size(3) != 1:
-            pred = adaptive_avg_pool2d(pred, output_size=(1, 1))
+        if len(pred.size) > 2:
+            if pred.size(2) != 1 or pred.size(3) != 1:
+                pred = adaptive_avg_pool2d(pred, output_size=(1, 1))
 
-        pred = pred.squeeze(3).squeeze(2).cpu().numpy()
+            pred = pred.squeeze(3).squeeze(2).cpu().numpy()
 
         pred_arr[start_idx:start_idx + pred.shape[0]] = pred
 
