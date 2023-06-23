@@ -1,3 +1,3 @@
 __version__ = '0.2.1'
-from .fid_score import compute_statistics_of_dataset, compute_statistics_of_path, get_model, calculate_frechet_distance, calculate_activation_statistics
-__all__ = ['compute_statistics_of_dataset', 'compute_statistics_of_path', 'get_model', 'calculate_frechet_distance', 'calculate_activation_statistics']
+from .fid_score import compute_statistics_of_dataset, compute_statistics_of_path, get_model, calculate_frechet_distance, calculate_activation_statistics, calculate_pairwise_cosine_similarity, get_activations_from_dset
+__all__ = ['compute_statistics_of_dataset', 'compute_statistics_of_path', 'get_model', 'calculate_frechet_distance', 'calculate_activation_statistics', 'get_activations_from_dset', 'calculate_pairwise_cosine_similarity']
