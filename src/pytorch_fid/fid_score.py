@@ -120,7 +120,7 @@ def get_activations_from_dset(
                                              drop_last=False,
                                              num_workers=num_workers)
 
-    pred_arr = np.empty((len(dset), dims))
+    pred_arr = torch.empty((len(dset), dims), device=device)
 
     start_idx = 0
 
@@ -293,9 +293,17 @@ def calculate_activation_statistics(files, model, batch_size=50, dims=2048,
         act = get_activations_from_dset(files, model, batch_size, dims, device, num_workers)
     else:
         act = get_activations(files, model, batch_size, dims, device, num_workers)
+    
+    act = act.cpu().numpy()
     mu = np.mean(act, axis=0)
     sigma = np.cov(act, rowvar=False)
     return mu, sigma
+
+
+def calculate_pairwise_cosine_similarity(acts1, acts2):
+    acts1 = torch.nn.functional.normalize(acts1, dim=1)
+    acts2 = torch.nn.functional.normalize(acts2, dim=1)
+    return torch.mm(acts1, acts2.t()).triu(diagonal=1).mean()
 
 
 def compute_statistics_of_dataset(dataset, model, batch_size, dims, device, num_workers=1):
@@ -341,9 +349,25 @@ def calculate_fid_given_paths(paths, batch_size, device, dims, num_workers=1):
 
     return fid_value
 
-def get_model(device, dims=2048):
-    block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[dims]
-    model = InceptionV3([block_idx]).to(device)
+def get_model(device, model_name='inception', dims=2048):
+    if model_name == 'inception':
+        block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[dims]
+        model = InceptionV3([block_idx]).to(device)
+        model.num_features = dims
+    elif model_name.startswith('dino'):
+        if model_name.startswith('dinov2'):
+            # Possible models : 'dinov2_vits14', 'dinov2_vitb14', 'dinov2_vitl14', 'dinov2_vitg14'
+            assert model_name in ['dinov2_vits14', 'dinov2_vitb14', 'dinov2_vitl14', 'dinov2_vitg14']
+            model = torch.hub.load('facebookresearch/dinov2', model_name)
+        else:
+            # Possible models : 'dino_vits16', 'dino_vits8', 'dino_vitb16', 'dino_vitb8', 'dino_resnet50' 
+            assert model_name in ['dino_vits16', 'dino_vits8', 'dino_vitb16', 'dino_vitb8', 'dino_resnet50']
+            model = torch.hub.load('facebookresearch/dino:main', model_name)
+    elif model_name.startswith('clip'):
+        raise NotImplementedError('To be implemented')
+    else:
+        raise Exception('Invalid model name')
+        
     return model
 
 
