@@ -367,6 +367,7 @@ def get_model(device, model_name='inception', dims=2048):
             # Possible models : 'dino_vits16', 'dino_vits8', 'dino_vitb16', 'dino_vitb8', 'dino_resnet50' 
             assert model_name in ['dino_vits16', 'dino_vits8', 'dino_vitb16', 'dino_vitb8', 'dino_resnet50']
             model = torch.hub.load('facebookresearch/dino:main', model_name)
+        model.to(device)
     elif model_name.startswith('clip'):
         raise NotImplementedError('To be implemented')
     else:
