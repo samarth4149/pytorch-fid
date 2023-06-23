@@ -271,7 +271,7 @@ def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
 
 
 def calculate_activation_statistics(files, model, batch_size=50, dims=2048,
-                                    device='cpu', num_workers=1):
+                                    device='cpu', num_workers=1, return_acts=False):
     """Calculation of the statistics used by the FID.
     Params:
     -- files       : List of image files paths OR a dataset object
@@ -294,10 +294,14 @@ def calculate_activation_statistics(files, model, batch_size=50, dims=2048,
     else:
         act = get_activations(files, model, batch_size, dims, device, num_workers)
     
-    act = act.cpu().numpy()
-    mu = np.mean(act, axis=0)
-    sigma = np.cov(act, rowvar=False)
-    return mu, sigma
+    act_np = act.cpu().numpy()
+    mu = np.mean(act_np, axis=0)
+    sigma = np.cov(act_np, rowvar=False)
+    
+    if return_acts:
+        return mu, sigma, act
+    else:
+        return mu, sigma
 
 
 def calculate_pairwise_cosine_similarity(acts1, acts2):
