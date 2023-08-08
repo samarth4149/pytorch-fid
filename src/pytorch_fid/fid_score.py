@@ -103,7 +103,7 @@ def get_activations_from_dset(
     -- num_workers : Number of parallel dataloader workers
 
     Returns:
-    -- A numpy array of dimension (num images, dims) that contains the
+    -- A torch tensor (on cpu) of dimension (num images, dims) that contains the
        activations of the given tensor when feeding inception with the
        query tensor.
     """
@@ -120,7 +120,7 @@ def get_activations_from_dset(
                                              drop_last=False,
                                              num_workers=num_workers)
 
-    pred_arr = torch.empty((len(dset), dims), device=device)
+    pred_arr = torch.empty((len(dset), dims))
 
     start_idx = 0
 
